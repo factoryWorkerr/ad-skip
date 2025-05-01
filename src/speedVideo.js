@@ -1,8 +1,7 @@
-const videoElements = document.querySelectorAll("video");
+let video = document.querySelector("video");
 console.log("started");
-videoElements.forEach((video) => {
-  console.log("counting vids");
-  video.addEventListener("playing", function () {
+
+video.addEventListener("playing", function () {
     console.log("A video started playing!");
 
     video.addEventListener("timeupdate", () => {
@@ -10,8 +9,9 @@ videoElements.forEach((video) => {
         video.playbackRate = 16;
       }
     });
-  });
 });
+  
+
 
 function isAdPlaying() {
   return document.querySelector("div.ad-showing");
