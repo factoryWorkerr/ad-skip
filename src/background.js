@@ -1,40 +1,18 @@
 chrome.runtime.onInstalled.addListener(() => {
     chrome.action.setBadgeText({
-      text: "OFF",
+      text: "ON",
     });
   });
 
 const extensions = 'https://developer.chrome.com/docs/extensions';
 const yt = 'https://www.youtube.com/';
 
-chrome.action.onClicked.addListener(async (tab) => {
-  if (tab.url.startsWith(extensions) || tab.url.startsWith(yt)) {
-    // Retrieve the action badge to check if the extension is 'ON' or 'OFF'
-    const prevState = await chrome.action.getBadgeText({ tabId: tab.id });
-    // Next state will always be the opposite
-    const nextState = prevState === 'ON' ? 'OFF' : 'ON';
-
-    // Set the action badge to the next state
-    await chrome.action.setBadgeText({
-      tabId: tab.id,
-      text: nextState,
-    });
-    code();
-  }
-});
-
-async function code() {
-    if (nextState === "ON") {
-        // Insert the CSS file when the user turns the extension on
-        await chrome.scripting.executeScript({
-          files: ["speedVideo.js"],
-          target: { tabId: tab.id },
-        });
-      } else if (nextState === "OFF") {
-        // Remove the CSS file when the user turns the extension off
-        await chrome.scripting.removeCSS({
-          files: ["speedVideo.js"],
-          target: { tabId: tab.id },
-        });
+chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
+    if (changeInfo.status === 'complete' && tab.url) {
+      console.log("Tab updated:", tab.url);
+      await chrome.scripting.executeScript({
+        files: ["speedVideo.js"],
+        target: { tabId: tabId },
+      });
     }
-}
+  });

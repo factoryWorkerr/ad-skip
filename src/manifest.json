@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
-    "name": "Focus Mode",
-    "description": "Enable focus mode on Chrome's official Extensions and Chrome Web Store documentation.",
+    "name": "Ad Blocker for YouTube",
+    "description": "Skip YouTube ads legally.",
     "version": "1.0",
     "icons": {
       "16": "images/icon-16.png",
@@ -21,6 +21,6 @@
         }
     
     },
-    "permissions": ["activeTab", "scripting"]
-    
+    "permissions": ["activeTab", "scripting", "tabs"],
+    "host_permissions": ["https://www.youtube.com/"]
 }
