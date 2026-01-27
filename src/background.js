@@ -1,21 +1,25 @@
-chrome.runtime.onInstalled.addListener(() => {
-    chrome.action.setBadgeText({
-      text: "ON",
-    });
-  });
-  
-  const extensions = 'https://developer.chrome.com/docs/extensions';
-  const yt = 'https://www.youtube.com/';
-  
-  chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
-    // Check if the status has changed to 'complete', indicating the page has finished loading.
-    if (changeInfo.status === 'complete' && tab.url) {
-      console.log("Tab finished loading:", tab.url);
-      if (tab.url.includes("youtube.com/watch")) {
-        await chrome.scripting.executeScript({
-            files: ["speedVideo.js"],
-            target: { tabId: tabId },
-          });
+console.log("Speed Demon initialized.");
+
+// We check every 500ms. This is light on the CPU but fast enough to catch ads.
+setInterval(() => {
+  const video = document.querySelector("video");
+  const adShowing = document.querySelector(".ad-showing, .ad-interrupting");
+
+  if (video) {
+    if (adShowing) {
+      // If an ad is playing, go warp speed and mute it
+      if (video.playbackRate !== 16) {
+        console.log("Ad detected. Engaging warp drive...");
+        video.playbackRate = 16;
+        video.muted = true;
+      }
+    } else {
+      // If no ad is showing, but speed is still 16x, reset it
+      if (video.playbackRate === 16) {
+        console.log("Ad finished. Resuming normal speed.");
+        video.playbackRate = 1;
+        video.muted = false;
       }
     }
-  });
+  }
+}, 500);
