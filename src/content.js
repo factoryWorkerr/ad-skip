@@ -1,25 +1,52 @@
-console.log("Speed Demon initialized.");
+// Variable to store the user's playback speed
+let originalSpeed = 1;
 
-// We check every 500ms. This is light on the CPU but fast enough to catch ads.
-setInterval(() => {
+const findAndFastForward = () => {
   const video = document.querySelector("video");
-  const adShowing = document.querySelector(".ad-showing, .ad-interrupting");
+  const player = document.querySelector("#movie_player");
 
-  if (video) {
-    if (adShowing) {
-      // If an ad is playing, go warp speed and mute it
-      if (video.playbackRate !== 16) {
-        console.log("Ad detected. Engaging warp drive...");
-        video.playbackRate = 16;
-        video.muted = true;
-      }
-    } else {
-      // If no ad is showing, but speed is still 16x, reset it
-      if (video.playbackRate === 16) {
-        console.log("Ad finished. Resuming normal speed.");
-        video.playbackRate = 1;
-        video.muted = false;
-      }
+  if (!video || !player) return;
+
+  // Check if the ad-showing class is present on the player
+  const isAd = player.classList.contains("ad-showing") || 
+               player.classList.contains("ad-interrupting");
+
+  if (isAd) {
+    if (video.playbackRate !== 16) {
+      // Store current speed (if it's not already the 16x boost)
+      originalSpeed = video.playbackRate;
+      video.playbackRate = 16;
+      video.muted = true;
+      console.log("Warp speed engaged!");
+    }
+  } else {
+    // If ad is gone but we are still at 16x, reset
+    if (video.playbackRate === 16) {
+      video.playbackRate = originalSpeed;
+      video.muted = false;
+      console.log("Back to reality. Speed restored to:", originalSpeed);
     }
   }
-}, 500);
+};
+
+// Create the observer
+const observer = new MutationObserver((mutations) => {
+  // We only care about changes to the 'class' attribute
+  for (const mutation of mutations) {
+    if (mutation.type === "attributes" && mutation.attributeName === "class") {
+      findAndFastForward();
+    }
+  }
+});
+
+// Start watching the movie player
+const targetNode = document.querySelector("#movie_player");
+if (targetNode) {
+  observer.observe(targetNode, { attributes: true });
+} else {
+  // Fallback: If the player isn't loaded yet, try again in a second
+  setTimeout(() => {
+    const retryNode = document.querySelector("#movie_player");
+    if (retryNode) observer.observe(retryNode, { attributes: true });
+  }, 2000);
+}
