@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "YouTube Speed Demon",
+  "name": "YouTube Ad-Speeder",
   "version": "1.0",
   "description": "Speeds up ads to 16x automatically.",
   "permissions": ["storage"],
@@ -12,6 +12,6 @@
     }
   ],
   "action": {
-    "default_title": "Speed Demon Active"
+    "default_title": "Ad-Speeding Active"
   }
 }
